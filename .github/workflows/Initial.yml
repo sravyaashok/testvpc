@@ -24,7 +24,7 @@ jobs:
       VAR_FILE: "aws-vpc.tfvars"
       TFSTATE_BUCKET: "aws-ent-tableau"
       TFSTATE_KEY: "statefiles/aws-vpc/aws-vpc.tfstate"
-      TFSTATE_REGION: "us-west-2"
+      TFSTATE_REGION: "us-east-1"
 
     steps:
       - name: Checkout Latest Source Code
