@@ -11,6 +11,7 @@ on:
         options:
           - plan
           - apply
+          - destroy
 
 jobs:
   Deploy:
@@ -53,3 +54,8 @@ jobs:
         id: apply
         #run: terraform apply -auto-approve -var-file=${{ env.VAR_FILE }}
         run: terraform apply -auto-approve
+        
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.operation == 'destroy' }}
+        id: destroy
+        run: terraform destroy -auto-approve
