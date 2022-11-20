@@ -1,10 +1,10 @@
-name: PostgreSQL-Deploy-PROD
+name: VPC-Deploy
 
 on:
   workflow_dispatch:
     inputs:
       operation:
-        description: 'Terraform Operations for PostgreSQL deploy'
+        description: 'Terraform Operations for VPC deploy'
         default: 'plan'
         required: true
         type: choice
