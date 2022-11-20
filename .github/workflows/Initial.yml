@@ -21,9 +21,9 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: "us-west-2"
-#       VAR_FILE: "aws-tableau-postgres-devl.tfvars"
-#       TFSTATE_BUCKET: "aws-ent-sharedapps-devl-statefiles"
-#       TFSTATE_KEY: "statefiles/aws-tableau-devl-postgres/aws-tableau-devl-postgres.tfstate"
+      VAR_FILE: "aws-vpc.tfvars"
+      TFSTATE_BUCKET: "aws-ent-tableau"
+      TFSTATE_KEY: "statefiles/aws-vpc/aws-vpc.tfstate"
 
     steps:
       - name: Checkout Latest Source Code
@@ -39,21 +39,21 @@ jobs:
         id: init
         run: |
            rm -rf .terraform
-           #terraform init -backend-config="bucket=${{env.TFSTATE_BUCKET}}" -backend-config="key=${{env.TFSTATE_KEY}}" -backend-config="region=${{env.TFSTATE_REGION}}"
-           terraform init
+           terraform init -backend-config="bucket=${{env.TFSTATE_BUCKET}}" -backend-config="key=${{env.TFSTATE_KEY}}" -backend-config="region=${{env.TFSTATE_REGION}}"
+           #terraform init
    
       - name: Terraform Plan
         if: ${{ github.event.inputs.operation == 'plan' }}
         id: plan
         run: |
-          #terraform plan -var-file=${{ env.VAR_FILE }}
-          terraform plan
+          terraform plan -var-file=${{ env.VAR_FILE }}
+          #terraform plan
 
       - name: Terraform Apply
         if: ${{ github.event.inputs.operation == 'apply' }}
         id: apply
-        #run: terraform apply -auto-approve -var-file=${{ env.VAR_FILE }}
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var-file=${{ env.VAR_FILE }}
+        #run: terraform apply -auto-approve
         
       - name: Terraform Destroy
         if: ${{ github.event.inputs.operation == 'destroy' }}
