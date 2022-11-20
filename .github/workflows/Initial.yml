@@ -1,0 +1,54 @@
+name: PostgreSQL-Deploy-PROD
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Terraform Operations for PostgreSQL deploy'
+        default: 'plan'
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: "us-west-2"
+#       VAR_FILE: "aws-tableau-postgres-devl.tfvars"
+#       TFSTATE_BUCKET: "aws-ent-sharedapps-devl-statefiles"
+#       TFSTATE_KEY: "statefiles/aws-tableau-devl-postgres/aws-tableau-devl-postgres.tfstate"
+
+    steps:
+      - name: Checkout Latest Source Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        id: init
+        run: |
+           rm -rf .terraform
+           #terraform init -backend-config="bucket=${{env.TFSTATE_BUCKET}}" -backend-config="key=${{env.TFSTATE_KEY}}" -backend-config="region=${{env.TFSTATE_REGION}}"
+           terraform init
+   
+      - name: Terraform Plan
+        if: ${{ github.event.inputs.operation == 'plan' }}
+        id: plan
+        run: |
+          #terraform plan -var-file=${{ env.VAR_FILE }}
+          terraform plan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/master' && ${{ github.event.inputs.operation == 'apply' }}
+        id: apply
+        run: terraform apply -auto-approve -var-file=${{ env.VAR_FILE }}
