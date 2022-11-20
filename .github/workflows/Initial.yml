@@ -51,7 +51,7 @@ jobs:
           #terraform plan
 
       - name: Terraform Apply
-        if: (github.event.inputs.operation == 'apply' && github.head_ref != 'master')
+        if: (github.event.inputs.operation == 'apply' && github.head_ref != 'refs/heads/master')
         id: apply
         run: terraform apply -auto-approve -var-file=${{ env.VAR_FILE }}
         #run: terraform apply -auto-approve
